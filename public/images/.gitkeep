@@ -1,0 +1,14 @@
+# Image Placeholders
+# 
+# Add the following images to this directory:
+#
+# 1. profile.jpg
+#    Your profile photo (square, at least 400x400px recommended)
+#
+# 2. bruce-mccandless-spacewalk.jpg
+#    The famous untethered spacewalk photo of Bruce McCandless
+#    Download from NASA: https://images.nasa.gov/details-S84-27017
+#
+# After adding the real images, update src/pages/index.astro:
+# - Change '/images/profile.svg' to '/images/profile.jpg'
+# - Change '/images/spacewalk-placeholder.svg' to '/images/bruce-mccandless-spacewalk.jpg'

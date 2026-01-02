@@ -1,0 +1,281 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+---
+
+<BaseLayout title="Kai's Blog">
+  <main class="main">
+    <!-- Spacewalk Feature -->
+    <section class="spacewalk">
+      <div class="container">
+        <div class="spacewalk-grid">
+          <div class="spacewalk-image">
+            <img 
+              src="/images/space.jpg" 
+              alt="Bruce McCandless performing the first untethered spacewalk, 1984" 
+            />
+          </div>
+          <div class="spacewalk-content">
+            <blockquote>
+              "It may have been a small step for Neil, but it's a heck of a big leap for me."
+            </blockquote>
+            <cite>— Bruce McCandless II</cite>
+            <p class="spacewalk-context">First untethered spacewalk, February 7, 1984</p>
+            <a 
+              href="https://youtu.be/RvnC--JjDBw?si=bLpW0vpkkxj3n6iR" 
+              target="_blank" 
+              rel="noopener" 
+              class="spacewalk-link"
+            >
+              Watch the footage
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="posts-section">
+      <div class="container">
+        <h2 class="section-title">Writing</h2>
+        {posts.length > 0 ? (
+          <ul class="posts-list">
+            {posts.map((post, index) => (
+              <li class="post-item" style={`--delay: ${index * 0.05}s`}>
+                <a href={`/blog/${post.slug}`} class="post-link">
+                  <time datetime={post.data.date.toISOString()}>
+                    {formatDate(post.data.date)}
+                  </time>
+                  <h3 class="post-title">{post.data.title}</h3>
+                  <p class="post-description">{post.data.description}</p>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="post-tags">
+                      {post.data.tags.map(tag => (
+                        <span class="post-tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div class="no-posts">
+            <p>No posts yet. Check back soon!</p>
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .main {
+    flex: 1;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+  }
+  
+  /* Spacewalk Section */
+  .spacewalk {
+    padding: var(--space-xl) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .spacewalk-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  
+  .spacewalk-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  [data-theme="dark"] .spacewalk-image {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  }
+  
+  .spacewalk-image img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    object-position: center 60%;
+  }
+  
+  .spacewalk-content {
+    padding: var(--space-md) 0;
+  }
+  
+  .spacewalk-content blockquote {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--color-text);
+    margin: 0 0 var(--space-md);
+    border: none;
+    padding: 0;
+  }
+  
+  .spacewalk-content cite {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+  }
+  
+  .spacewalk-context {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+  }
+  
+  .spacewalk-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    transition: gap 0.2s ease;
+  }
+  
+  .spacewalk-link:hover {
+    gap: var(--space-sm);
+  }
+  
+  /* Posts Section */
+  .posts-section {
+    padding: var(--space-xl) 0 var(--space-2xl);
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-body);
+  }
+  
+  .posts-list {
+    list-style: none;
+  }
+  
+  .post-item {
+    animation: fadeIn 0.5s ease-out both;
+    animation-delay: var(--delay);
+  }
+  
+  .post-item + .post-item {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .post-link {
+    display: block;
+    color: inherit;
+  }
+  
+  .post-link:hover .post-title {
+    color: var(--color-accent);
+  }
+  
+  .post-link time {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  
+  .post-title {
+    font-size: 1.5rem;
+    margin: var(--space-sm) 0;
+    transition: color 0.2s ease;
+    line-height: 1.35;
+  }
+  
+  .post-description {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+  
+  .post-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    background: var(--color-accent-muted);
+    color: var(--color-accent);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  
+  .no-posts {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--color-text-secondary);
+  }
+  
+  @media (max-width: 768px) {
+    .spacewalk-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+    
+    .spacewalk-content blockquote {
+      font-size: 1.15rem;
+    }
+    
+    .post-title {
+      font-size: 1.25rem;
+    }
+  }
+</style>
